@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Delete, Get, Injectable, NotFoundException, Post, Put } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Character } from './data/character.model';
 import { CharacterDto } from './dtos/CharacterDto';
@@ -15,77 +15,88 @@ export class CharactersService {
     private skillModel: typeof Skill,
   ) {}
 
-  async create(data: CharacterDto): Promise<CharacterDto> {
-    // Char exists?
-    const charExists = await this.characterModel.findOne({ where: { name: data.name, lore: data.lore } });
-    if (charExists) {
-      throw new NotFoundException(`Character with name "${data.name}" already exists`);
-    }
-
-    // Get passiveSkill and save it if doesn't exists
-    const { passiveSkill, ...characterData } = data;
-    const char = await this.characterModel.create(characterData);
-
-    if (passiveSkill) {
-      let passiveSkillInstance = await this.skillModel.findOne({
-        where: { name: passiveSkill.name },
-      });
-
-      if (!passiveSkillInstance) {
-        passiveSkillInstance = await this.skillModel.create({
-          ...passiveSkill,
-        });
-      }
-
-      if (passiveSkillInstance && passiveSkillInstance.id !== undefined) {
-        char.passiveSkillId = passiveSkillInstance.id;
-      }
-
-      await char.save();
-    }
-
-    const charWithRelations = await this.characterModel.findByPk(char.id, {
-      include: [{ model: Skill, as: 'passiveSkill' }],
-    });
-
-    const plainChar = charWithRelations?.toJSON();
-    console.log(plainChar);
-
+  private async getPlainCharacter(id: number): Promise<CharacterDto> {
+  const charWithSkill = await this.findCharWithSkill(id);
+    const plainChar = charWithSkill?.toJSON();
     return plainToInstance(CharacterDto, plainChar, {
       excludeExtraneousValues: true,
     });
+}
+
+  private async findCharWithSkill(id: number): Promise<Character | null> {
+    return this.characterModel.findByPk(id, {
+      include: [{ model: Skill, as: 'passiveSkill' }],
+    });
+  }
+
+  async create(data: CharacterDto): Promise<CharacterDto> {
+    // Check if character exists
+    const charExists = await this.characterModel.findOne({
+      where: { name: data.name, lore: data.lore },
+    });
+    if (charExists) {
+      throw new NotFoundException(
+        `Character with name "${data.name}" already exists`,
+      );
+    }
+
+    // get passive skill, check if it exists or create a new one
+    const { passiveSkill, ...characterData } = data;
+    let passiveSkillId: number | undefined;
+
+    if (passiveSkill) {
+      const [skillInstance, created] = await this.skillModel.findOrCreate({
+        where: { name: passiveSkill.name },
+        defaults: {
+          description: passiveSkill.description,
+          effect: passiveSkill.effect,
+        },
+      });
+      passiveSkillId = skillInstance.id;
+    }
+
+    // Create character
+    const char = await this.characterModel.create(
+      {
+        ...characterData,
+        passiveSkillId: passiveSkillId,
+      },
+      {
+        include: [{ model: Skill, as: 'passiveSkill' }],
+      },
+    );
+
+    // Get the plain object with its relations and return it in JSON 
+    return this.getPlainCharacter(char.id);
   }
 
   async findAll(): Promise<CharacterDto[]> {
     const characters: Character[] = await this.characterModel.findAll({
-      include: ['passiveSkill'],
+      include: [{ model: Skill, as: 'passiveSkill' }],
     });
-    return characters.map((character) =>
-      plainToInstance(CharacterDto, character, {
-        excludeExtraneousValues: true,
-      }),
-    );
+    console.log(characters.toString())
+    return Promise.all(characters.map((char) =>
+      this.getPlainCharacter(char.id)
+    ));
   }
 
   async findById(id: number): Promise<CharacterDto> {
     const character: Character | null = await this.characterModel.findByPk(id, {
-      include: ['passiveSkill'],
+      include: [{ model: Skill, as: 'passiveSkill' }],
     });
     if (!character) {
       throw new NotFoundException(`> Character with id ${id} not found`);
     }
-    return plainToInstance(CharacterDto, character);
+    return this.getPlainCharacter(character.id);
   }
 
   async delete(id: number): Promise<boolean> {
-    // Buscar personaje para obtener passiveSkillId
     const character = await this.characterModel.findByPk(id);
 
     if (!character) {
       throw new NotFoundException(`Character with id ${id} not found`);
     }
 
-    // Borrar skill pasiva si existe
     if (character.passiveSkillId) {
       await this.skillModel.destroy({
         where: { id: character.passiveSkillId },
@@ -114,3 +125,5 @@ export class CharactersService {
     return this.findById(id);
   }
 }
+
+
