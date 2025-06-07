@@ -1,4 +1,11 @@
-import { Delete, Get, Injectable, NotFoundException, Post, Put } from '@nestjs/common';
+import {
+  Delete,
+  Get,
+  Injectable,
+  NotFoundException,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Character } from './data/character.model';
 import { CharacterDto } from './dtos/CharacterDto';
@@ -15,20 +22,37 @@ export class CharactersService {
     private skillModel: typeof Skill,
   ) {}
 
+  /**
+   * Converts a Character instance to a plain object and transforms it into a CharacterDto.
+   * @param id
+   * @returns  {Promise<CharacterDto>} A promise that resolves to a CharacterDto object.
+   * @throws NotFoundException if the character with the given id does not exist.
+   */
   private async getPlainCharacter(id: number): Promise<CharacterDto> {
-  const charWithSkill = await this.findCharWithSkill(id);
+    const charWithSkill = await this.findCharWithSkill(id);
     const plainChar = charWithSkill?.toJSON();
     return plainToInstance(CharacterDto, plainChar, {
       excludeExtraneousValues: true,
     });
-}
+  }
 
+  /**
+   *  Finds a character by its ID and includes its passive skill.
+   * @param id 
+   * @returns  {Promise<Character | null>} A promise that resolves to a Character instance or null if not found.
+   */
   private async findCharWithSkill(id: number): Promise<Character | null> {
     return this.characterModel.findByPk(id, {
       include: [{ model: Skill, as: 'passiveSkill' }],
     });
   }
 
+  /**
+   * Creates a new character with the provided data.
+   * @param data - The data for the new character.
+   * @returns {Promise<CharacterDto>} A promise that resolves to the created CharacterDto.
+   * @throws NotFoundException if a character with the same name and lore already exists.
+   */
   async create(data: CharacterDto): Promise<CharacterDto> {
     // Check if character exists
     const charExists = await this.characterModel.findOne({
@@ -66,28 +90,36 @@ export class CharactersService {
       },
     );
 
-    // Get the plain object with its relations and return it in JSON 
+    // Get the plain object with its relations and return it in JSON
     return this.getPlainCharacter(char.id);
   }
 
+  /**
+   * Retrieves all characters from the database.
+   * @returns {Promise<CharacterDto[]>} A promise that resolves to an array of CharacterDto objects.
+   */
   async findAll(): Promise<CharacterDto[]> {
     const characters: Character[] = await this.characterModel.findAll({
       include: [{ model: Skill, as: 'passiveSkill' }],
     });
-    console.log(characters.toString())
-    return Promise.all(characters.map((char) =>
-      this.getPlainCharacter(char.id)
-    ));
+    console.log(characters.toString());
+    return Promise.all(
+      characters.map((char) => this.getPlainCharacter(char.id)),
+    );
   }
-
+ 
+  /**
+   * Retrieves a character by its ID.
+   * @param id - The ID of the character to retrieve.
+   * @returns {Promise<CharacterDto>} A promise that resolves to the CharacterDto object.
+   * @throws NotFoundException if the character with the given ID does not exist.
+   */
   async findById(id: number): Promise<CharacterDto> {
-    const character: Character | null = await this.characterModel.findByPk(id, {
-      include: [{ model: Skill, as: 'passiveSkill' }],
-    });
-    if (!character) {
-      throw new NotFoundException(`> Character with id ${id} not found`);
+    const char = await this.findCharWithSkill(id);
+    if (!char) {
+      throw new NotFoundException(`Character with id ${id} not found`);
     }
-    return this.getPlainCharacter(character.id);
+    return this.getPlainCharacter(char.id);
   }
 
   async delete(id: number): Promise<boolean> {
@@ -109,14 +141,10 @@ export class CharactersService {
   }
 
   async update(id: number, characterDto: CharacterDto): Promise<CharacterDto> {
-    // Actualizar personaje
-    const [count, [updatedCharacter]] = await this.characterModel.update(
-      characterDto,
-      {
-        where: { id },
-        returning: true,
-      },
-    );
+    const [count] = await this.characterModel.update(characterDto, {
+      where: { id },
+      returning: true,
+    });
 
     if (count === 0) {
       throw new NotFoundException(`Character with id ${id} not found`);
@@ -125,5 +153,3 @@ export class CharactersService {
     return this.findById(id);
   }
 }
-
-
