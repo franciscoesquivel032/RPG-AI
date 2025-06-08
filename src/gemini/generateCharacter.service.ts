@@ -18,7 +18,8 @@ export class GenerateCharacterService {
         const PROMPT = 
         `Genera un personaje de rpg basado en la siguiente descripción del mundo:
         ${worldDescription} 
-        y la descripción del personaje: 
+        si la descripción del mundo es una descripción de un videojuego, una serie o una película, utiliza la descripción del mundo como base para crear un personaje que encaje en ese universo.
+        Utiliza la siguiente descripción del personaje:
         ${characterDescription}.
         El personaje debe tener un nombre, una clase, una historia y una habilidad pasiva. Deberás devolver un JSON con las siguientes propiedades:
         {
