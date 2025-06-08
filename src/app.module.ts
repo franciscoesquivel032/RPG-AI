@@ -4,6 +4,7 @@ import { CharactersModule } from './characters/characters.module';
 import 'dotenv/config';
 import { Skill } from './characters/data/skill.model';
 import { Character } from './characters/data/character.model';
+import { GenerateCharacterModule } from './gemini/generateCharacter.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { Character } from './characters/data/character.model';
       models: [Character, Skill]
     }),
     CharactersModule,
+    GenerateCharacterModule,
   ],
 })
 export class AppModule {}

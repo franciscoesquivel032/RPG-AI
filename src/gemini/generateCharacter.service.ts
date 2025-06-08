@@ -1,25 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import axios from "axios";
+import { AIService } from "./aiService";
 
 @Injectable()
 export class GenerateCharacterService {
-    private readonly API_KEY = process.env.GEMINI_API_KEY;
-    private readonly API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${this.API_KEY}`;
+    constructor(
+        private readonly aiService: AIService,
+    ){}
 
     async generateCharacter(worldDescription : string, characterDescription: string) : Promise<string>{
-        try {
-            const response = await axios.post(this.API_URL, {
-                contents: [
-                    {
-                        parts: [{ text: this.getPrompt(worldDescription, characterDescription) }],
-                    },
-                ],
-            });
-            return response.data.candidates?.[0]?.content?.parts?.[0]?.text;
-        } catch (error) {
-            console.error("Error generating character: ", error);
-            throw new Error("Error while generating character with AI");
-        }
+        const prompt = this.getPrompt(worldDescription, characterDescription);
+        return await this.aiService.sendPrompt(prompt);
     }
 
     getPrompt(worldDescription: string, characterDescription: string) : string {

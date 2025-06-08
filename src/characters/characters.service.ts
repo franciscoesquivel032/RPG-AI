@@ -1,10 +1,6 @@
 import {
-  Delete,
-  Get,
   Injectable,
   NotFoundException,
-  Post,
-  Put,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Character } from './data/character.model';

@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { GenerateCharacterService } from "./generateCharacter.service";
 
-@Controller()
+@Controller('ai')
 export class GenerateCharacterController {
     constructor(
         private readonly generateCharacterService: GenerateCharacterService
