@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
+
+/**
+ * Service to interact with the Gemini AI API for generating character content.
+ */
+
 @Injectable()
 export class AIService {
-    
+
     private readonly API_KEY: string = process.env.GEMINI_API_KEY || 'NO API KEY PROVIDED';
     private readonly API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.API_KEY}`;
 

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import axios from "axios";
 import { AIService } from "./aiService";
+
 
 @Injectable()
 export class GenerateCharacterService {
@@ -10,12 +10,13 @@ export class GenerateCharacterService {
 
     async generateCharacter(worldDescription : string, characterDescription: string) : Promise<string>{
         const prompt = this.getPrompt(worldDescription, characterDescription);
-        return await this.aiService.sendPrompt(prompt);
+        const response = await this.aiService.sendPrompt(prompt);
+        return response;
     }
 
     getPrompt(worldDescription: string, characterDescription: string) : string {
         const PROMPT = 
-        `Genera un personaje de rol basado en la siguiente descripción del mundo:
+        `Genera un personaje de rpg basado en la siguiente descripción del mundo:
         ${worldDescription} 
         y la descripción del personaje: 
         ${characterDescription}.
