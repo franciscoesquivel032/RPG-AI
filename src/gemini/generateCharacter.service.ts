@@ -10,7 +10,7 @@ export class GenerateCharacterService {
 
     async generateCharacter(worldDescription : string, characterDescription: string) : Promise<string>{
         const prompt = this.getPrompt(worldDescription, characterDescription);
-        const response = await this.aiService.sendPrompt(prompt);
+        const response = await this.aiService.textToText(prompt);
         return response;
     }
 
