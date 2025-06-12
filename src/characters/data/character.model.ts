@@ -21,6 +21,8 @@ export class Character extends Model {
   declare class: string;
   @Column
   declare lore: string;
+  @Column
+  declare skinDescription: string;
   @ForeignKey(() => Skill)
   @Column
   declare passiveSkillId: number;
