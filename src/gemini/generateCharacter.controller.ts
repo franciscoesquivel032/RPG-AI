@@ -7,7 +7,7 @@ export class GenerateCharacterController {
         private readonly generateCharacterService: GenerateCharacterService
     ){}
 
-    @Post('generate')
+    @Post('generateCharacter')
     async generateCharacter(
         @Body('worldDescription') worldDescription: string,
         @Body('characterDescription') characterDescription: string
