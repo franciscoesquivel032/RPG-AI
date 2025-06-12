@@ -103,6 +103,8 @@ export class CharactersService {
       characters.map((char) => this.getPlainCharacter(char.id)),
     );
   }
+
+  
  
   /**
    * Retrieves a character by its ID.

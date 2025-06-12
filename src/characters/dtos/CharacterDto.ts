@@ -9,6 +9,8 @@ export class CharacterDto {
     @Expose()
     lore: string;
     @Expose()
+    skinDescription: string;
+    @Expose()
     @Type(() => SkillDto)
     passiveSkill: SkillDto;
 }

@@ -10,7 +10,7 @@ export class GenerateCharacterService {
 
     async generateCharacter(worldDescription : string, characterDescription: string) : Promise<string>{
         const prompt = this.getPrompt(worldDescription, characterDescription);
-        const response = await this.aiService.sendPrompt(prompt);
+        const response = await this.aiService.textToText(prompt);
         return response;
     }
 
@@ -26,6 +26,7 @@ export class GenerateCharacterService {
             "name": "Nombre del personaje",
             "class": "Clase del personaje",
             "lore": "Historia del personaje",
+            "skinDescription": "Descripción de la apariencia del personaje",
             "passiveSkill": {
                 "name": "Nombre de la habilidad pasiva",
                 "description": "Descripción de la habilidad pasiva"
