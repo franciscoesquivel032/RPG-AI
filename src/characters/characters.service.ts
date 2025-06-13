@@ -29,7 +29,7 @@ export class CharactersService {
    * @throws NotFoundException if a character with the same name and lore already exists.
    */
 async create(data: CharacterDto): Promise<CharacterDto> {
-  // Verificar duplicado
+  // Verify if character already exits
   const charExists = await this.characterModel.findOne({
     where: { name: data.name, lore: data.lore },
   });
@@ -39,7 +39,7 @@ async create(data: CharacterDto): Promise<CharacterDto> {
     );
   }
 
-  // Verificar que existan la skill y la location referenciadas
+  // Verify if passive skill and location exist
   const skill = await this.skillModel.findByPk(data.passiveSkill);
   if (!skill) {
     throw new NotFoundException(`Skill with id ${data.passiveSkill} not found`);
@@ -52,7 +52,7 @@ async create(data: CharacterDto): Promise<CharacterDto> {
     );
   }
 
-  // Crear personaje con las claves foráneas correctas
+  // Create character
   const character = await this.characterModel.create({
     name: data.name,
     class: data.class,
@@ -107,12 +107,6 @@ async create(data: CharacterDto): Promise<CharacterDto> {
 
     if (!character) {
       throw new NotFoundException(`Character with id ${id} not found`);
-    }
-
-    if (character.passiveSkillId) {
-      await this.skillModel.destroy({
-        where: { id: character.passiveSkillId },
-      });
     }
 
     const n = await this.characterModel.destroy({ where: { id } });

@@ -1,4 +1,4 @@
-import { HasOne, Model } from 'sequelize-typescript';
+import { BelongsTo, HasOne, Model } from 'sequelize-typescript';
 import { AutoIncrement, Column, ForeignKey, PrimaryKey, Table } from "sequelize-typescript";
 import { Character } from "./character.model";
 import { on } from 'events';
@@ -11,18 +11,18 @@ export class Skill extends Model {
     declare id: number;
 
     @Column({ unique : true })
-    name!: string;
+    declare name: string;
 
     @Column
-    description!: string;
+    declare description: string;
 
     @Column
-    effect!: string;
+    declare effect: string;
 
-    @HasOne(() => Character, { 
-        foreignKey: 'passiveSkillId',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    })
-    character?: Character;
+    @ForeignKey(() => Character)
+    @Column
+    declare characterId: number;
+
+    @BelongsTo(() => Character)
+    declare character: Character;
 }

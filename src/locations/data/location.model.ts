@@ -12,6 +12,8 @@ export class Location extends Model {
     declare description: string;
     @Column
     declare lore: string;
+
+    // Association with Character
     @HasMany(() => Character, { 
         as: 'characters',
         onDelete: 'CASCADE',
