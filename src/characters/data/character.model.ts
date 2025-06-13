@@ -8,6 +8,7 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { Skill } from './skill.model';
+import { Location } from 'src/locations/data/location.model';
 
 @Table
 export class Character extends Model {
@@ -23,9 +24,18 @@ export class Character extends Model {
   declare lore: string;
   @Column
   declare skinDescription: string;
+
+  // Skill association
   @ForeignKey(() => Skill)
   @Column
   declare passiveSkillId: number;
   @BelongsTo(() => Skill, { as: 'passiveSkill' })
   declare passiveSkill: Skill;
+
+  // Location association 
+  @ForeignKey(() => Location)
+  @Column
+  declare locationId: number;
+  @BelongsTo(() => Location, { as: 'location' })
+  declare location: Location;
 }
