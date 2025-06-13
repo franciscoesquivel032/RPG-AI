@@ -74,7 +74,6 @@ async create(data: CharacterDto): Promise<CharacterDto> {
     const characters = await this.characterModel.findAll({
       include: [ 
         { model: Skill, as: 'passiveSkill' },
-        { model: Location, as: 'location' },
       ],
     });
     return plainToInstance(CharacterDto, characters);
@@ -93,14 +92,13 @@ async create(data: CharacterDto): Promise<CharacterDto> {
       where: { id },
       include: [
         { model: Skill, as: 'passiveSkill' },
-        { model: Location, as: 'location' },
       ],
     });
 
     if (!char) {
       throw new NotFoundException(`Character with id ${id} not found`);
     }
-    
+
     return plainToInstance(CharacterDto, char);
   }
 

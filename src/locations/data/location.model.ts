@@ -12,6 +12,10 @@ export class Location extends Model {
     declare description: string;
     @Column
     declare lore: string;
-    @HasMany(() => Character, { as: 'characters' })
+    @HasMany(() => Character, { 
+        as: 'characters',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+     })
     declare characters: Character[];
 }

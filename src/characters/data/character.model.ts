@@ -9,6 +9,7 @@ import {
 } from 'sequelize-typescript';
 import { Skill } from './skill.model';
 import { Location } from 'src/locations/data/location.model';
+import { on } from 'events';
 
 @Table
 export class Character extends Model {
@@ -29,13 +30,21 @@ export class Character extends Model {
   @ForeignKey(() => Skill)
   @Column
   declare passiveSkillId: number;
-  @BelongsTo(() => Skill, { as: 'passiveSkill' })
+  @BelongsTo(() => Skill, { 
+    as: 'passiveSkill',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+   })
   declare passiveSkill: Skill;
 
   // Location association 
   @ForeignKey(() => Location)
   @Column
   declare locationId: number;
-  @BelongsTo(() => Location, { as: 'location' })
+  @BelongsTo(() => Location, { 
+    as: 'location',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE', 
+  })
   declare location: Location;
 }

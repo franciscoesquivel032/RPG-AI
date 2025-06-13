@@ -1,6 +1,7 @@
-import { Model } from 'sequelize-typescript';
+import { HasOne, Model } from 'sequelize-typescript';
 import { AutoIncrement, Column, ForeignKey, PrimaryKey, Table } from "sequelize-typescript";
 import { Character } from "./character.model";
+import { on } from 'events';
 
 @Table
 export class Skill extends Model {
@@ -17,4 +18,11 @@ export class Skill extends Model {
 
     @Column
     effect!: string;
+
+    @HasOne(() => Character, { 
+        foreignKey: 'passiveSkillId',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    })
+    character?: Character;
 }
