@@ -19,6 +19,7 @@ export class Skill extends Model {
     @Column
     declare effect: string;
 
+    // Association with Character
     @ForeignKey(() => Character)
     @Column
     declare characterId: number;
