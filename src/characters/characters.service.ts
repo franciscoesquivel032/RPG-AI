@@ -7,6 +7,7 @@ import { Character } from './data/character.model';
 import { CharacterDto } from './dtos/CharacterDto';
 import { plainToInstance } from 'class-transformer';
 import { Skill } from './data/skill.model';
+import { Location } from 'src/locations/data/location.model';
 
 @Injectable()
 export class CharactersService {
@@ -16,32 +17,10 @@ export class CharactersService {
 
     @InjectModel(Skill)
     private skillModel: typeof Skill,
+
+    @InjectModel(Location)
+    private locationModel: typeof Location,
   ) {}
-
-  /**
-   * Converts a Character instance to a plain object and transforms it into a CharacterDto.
-   * @param id
-   * @returns  {Promise<CharacterDto>} A promise that resolves to a CharacterDto object.
-   * @throws NotFoundException if the character with the given id does not exist.
-   */
-  private async getPlainCharacter(id: number): Promise<CharacterDto> {
-    const charWithSkill = await this.findCharWithSkill(id);
-    const plainChar = charWithSkill?.toJSON();
-    return plainToInstance(CharacterDto, plainChar, {
-      excludeExtraneousValues: true,
-    });
-  }
-
-  /**
-   *  Finds a character by its ID and includes its passive skill.
-   * @param id 
-   * @returns  {Promise<Character | null>} A promise that resolves to a Character instance or null if not found.
-   */
-  private async findCharWithSkill(id: number): Promise<Character | null> {
-    return this.characterModel.findByPk(id, {
-      include: [{ model: Skill, as: 'passiveSkill' }],
-    });
-  }
 
   /**
    * Creates a new character with the provided data.
@@ -49,59 +28,56 @@ export class CharactersService {
    * @returns {Promise<CharacterDto>} A promise that resolves to the created CharacterDto.
    * @throws NotFoundException if a character with the same name and lore already exists.
    */
-  async create(data: CharacterDto): Promise<CharacterDto> {
-    // Check if character exists
-    const charExists = await this.characterModel.findOne({
-      where: { name: data.name, lore: data.lore },
-    });
-    if (charExists) {
-      throw new NotFoundException(
-        `Character with name "${data.name}" already exists`,
-      );
-    }
-
-    // get passive skill, check if it exists or create a new one
-    const { passiveSkill, ...characterData } = data;
-    let passiveSkillId: number | undefined;
-
-    if (passiveSkill) {
-      const [skillInstance, created] = await this.skillModel.findOrCreate({
-        where: { name: passiveSkill.name },
-        defaults: {
-          description: passiveSkill.description,
-          effect: passiveSkill.effect,
-        },
-      });
-      passiveSkillId = skillInstance.id;
-    }
-
-    // Create character
-    const char = await this.characterModel.create(
-      {
-        ...characterData,
-        passiveSkillId: passiveSkillId,
-      },
-      {
-        include: [{ model: Skill, as: 'passiveSkill' }],
-      },
+async create(data: CharacterDto): Promise<CharacterDto> {
+  // Verificar duplicado
+  const charExists = await this.characterModel.findOne({
+    where: { name: data.name, lore: data.lore },
+  });
+  if (charExists) {
+    throw new NotFoundException(
+      `Character with name "${data.name}" already exists`,
     );
-
-    // Get the plain object with its relations and return it in JSON
-    return this.getPlainCharacter(char.id);
   }
+
+  // Verificar que existan la skill y la location referenciadas
+  const skill = await this.skillModel.findByPk(data.passiveSkill);
+  if (!skill) {
+    throw new NotFoundException(`Skill with id ${data.passiveSkill} not found`);
+  }
+
+  const location = await this.locationModel.findByPk(data.location);
+  if (!location) {
+    throw new NotFoundException(
+      `Location with id ${data.location} not found`,
+    );
+  }
+
+  // Crear personaje con las claves foráneas correctas
+  const character = await this.characterModel.create({
+    name: data.name,
+    class: data.class,
+    lore: data.lore,
+    skinDescription: data.skinDescription,
+    passiveSkillId: data.passiveSkill,
+    locationId: data.location,
+  });
+
+  return plainToInstance(CharacterDto, character);
+}
+
 
   /**
    * Retrieves all characters from the database.
    * @returns {Promise<CharacterDto[]>} A promise that resolves to an array of CharacterDto objects.
    */
   async findAll(): Promise<CharacterDto[]> {
-    const characters: Character[] = await this.characterModel.findAll({
-      include: [{ model: Skill, as: 'passiveSkill' }],
+    const characters = await this.characterModel.findAll({
+      include: [ 
+        { model: Skill, as: 'passiveSkill' },
+        { model: Location, as: 'location' },
+      ],
     });
-    console.log(characters.toString());
-    return Promise.all(
-      characters.map((char) => this.getPlainCharacter(char.id)),
-    );
+    return plainToInstance(CharacterDto, characters);
   }
 
   
@@ -113,11 +89,19 @@ export class CharactersService {
    * @throws NotFoundException if the character with the given ID does not exist.
    */
   async findById(id: number): Promise<CharacterDto> {
-    const char = await this.findCharWithSkill(id);
+    const char = await this.characterModel.findOne({
+      where: { id },
+      include: [
+        { model: Skill, as: 'passiveSkill' },
+        { model: Location, as: 'location' },
+      ],
+    });
+
     if (!char) {
       throw new NotFoundException(`Character with id ${id} not found`);
     }
-    return this.getPlainCharacter(char.id);
+    
+    return plainToInstance(CharacterDto, char);
   }
 
   async delete(id: number): Promise<boolean> {

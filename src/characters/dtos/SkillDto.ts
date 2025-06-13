@@ -7,4 +7,10 @@ export class SkillDto {
   description: string;
   @Expose()
   effect: string;
+
+  constructor(name: string, description: string, effect: string) {
+    this.name = name;
+    this.description = description;
+    this.effect = effect;
+  }
 }
