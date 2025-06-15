@@ -10,8 +10,9 @@ export class GenerateCharacterController {
     @Post('generate')
     async generateCharacter(
         @Body('worldDescription') worldDescription: string,
-        @Body('characterDescription') characterDescription: string
+        @Body('characterDescription') characterDescription: string,
+        @Body('locationId') locationId: number,
     ): Promise<string> {
-        return this.generateCharacterService.generateCharacter(worldDescription, characterDescription);
+        return this.generateCharacterService.generateCharacter(worldDescription, characterDescription, locationId);
     }
 }

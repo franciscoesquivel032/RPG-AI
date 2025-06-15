@@ -1,10 +1,11 @@
-import { AutoIncrement, Column, HasMany, Model, PrimaryKey } from "sequelize-typescript";
+import { AutoIncrement, Column, HasMany, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { Character } from "src/characters/data/character.model";
 
-export class Location extends Model {
-    @Column
+@Table
+export class Location extends Model<Location> {
     @PrimaryKey
     @AutoIncrement
+    @Column
     declare id: number;
     @Column
     declare name: string;

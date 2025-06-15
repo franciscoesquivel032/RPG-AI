@@ -13,6 +13,6 @@ import { LocationsModule } from 'src/locations/locations.module';
     LocationsModule
   ],
   controllers: [CharactersController],
-  providers: [CharactersService]
+  providers: [CharactersService],
 })
 export class CharactersModule {}

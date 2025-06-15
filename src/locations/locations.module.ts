@@ -8,6 +8,7 @@ import { Character } from 'src/characters/data/character.model';
 @Module({
   imports: [SequelizeModule.forFeature([Location, Character])],
   providers: [LocationsService],
-  controllers: [LocationsController]
+  controllers: [LocationsController],
+  exports: [LocationsService ,SequelizeModule.forFeature([Location])],
 })
 export class LocationsModule {}

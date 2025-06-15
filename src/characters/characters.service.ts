@@ -8,6 +8,7 @@ import { CharacterDto } from './dtos/CharacterDto';
 import { plainToInstance } from 'class-transformer';
 import { Skill } from './data/skill.model';
 import { Location } from 'src/locations/data/location.model';
+import { LocationsService } from 'src/locations/locations.service';
 
 @Injectable()
 export class CharactersService {
@@ -18,8 +19,7 @@ export class CharactersService {
     @InjectModel(Skill)
     private skillModel: typeof Skill,
 
-    @InjectModel(Location)
-    private locationModel: typeof Location,
+    private locationService: LocationsService,
   ) {}
 
   /**
@@ -45,7 +45,7 @@ async create(data: CharacterDto): Promise<CharacterDto> {
     throw new NotFoundException(`Skill with id ${data.passiveSkill} not found`);
   }
 
-  const location = await this.locationModel.findByPk(data.location);
+  const location = await this.locationService.findByPk(data.location);
   if (!location) {
     throw new NotFoundException(
       `Location with id ${data.location} not found`,
