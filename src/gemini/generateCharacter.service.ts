@@ -8,13 +8,13 @@ export class GenerateCharacterService {
         private readonly aiService: AIService,
     ){}
 
-    async generateCharacter(worldDescription : string, characterDescription: string) : Promise<string>{
-        const prompt = this.getPrompt(worldDescription, characterDescription);
+    async generateCharacter(worldDescription : string, characterDescription: string, locationId: number) : Promise<string>{
+        const prompt = this.getPrompt(worldDescription, characterDescription, locationId);
         const response = await this.aiService.textToText(prompt);
         return response;
     }
 
-    getPrompt(worldDescription: string, characterDescription: string) : string {
+    getPrompt(worldDescription: string, characterDescription: string, locationId: number) : string {
         const PROMPT = 
         `Genera un personaje de rpg basado en la siguiente descripción del mundo:
         ${worldDescription} 
@@ -26,12 +26,13 @@ export class GenerateCharacterService {
             "name": "Nombre del personaje",
             "class": "Clase del personaje",
             "lore": "Historia del personaje",
-            "skinDescription": "Descripción de la apariencia del personaje",
+            "skinDescription": "Descripción detallada de la apariencia del personaje basada en la descripción del personaje",
             "passiveSkill": {
                 "name": "Nombre de la habilidad pasiva",
                 "description": "Descripción de la habilidad pasiva"
                 "effect": "Efecto de la habilidad pasiva"
-            }          
+            }
+            "location": ${locationId}  
         }
         No utilices nombres de personajes ya existentes, amolda el personaje a la descripción del mundo y a la descripción del personaje fielmente.
         Responde únicamente con el JSON, sin ningún texto adicional.`;

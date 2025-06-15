@@ -6,8 +6,11 @@ import {
   AutoIncrement,
   ForeignKey,
   BelongsTo,
+  HasOne,
 } from 'sequelize-typescript';
 import { Skill } from './skill.model';
+import { Location } from 'src/locations/data/location.model';
+import { forwardRef } from '@nestjs/common';
 
 @Table
 export class Character extends Model {
@@ -23,9 +26,15 @@ export class Character extends Model {
   declare lore: string;
   @Column
   declare skinDescription: string;
-  @ForeignKey(() => Skill)
-  @Column
-  declare passiveSkillId: number;
-  @BelongsTo(() => Skill, { as: 'passiveSkill' })
+
+  // Skill association
+  @HasOne(() => Skill, { as: 'passiveSkill', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   declare passiveSkill: Skill;
+
+  // Location association 
+  @ForeignKey(() => Location)
+  @Column
+  declare locationId: number;
+  @BelongsTo(() => Location, { as: 'location', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  declare location: Location;
 }

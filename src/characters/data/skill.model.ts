@@ -1,6 +1,7 @@
-import { Model } from 'sequelize-typescript';
+import { BelongsTo, HasOne, IsInt, Model } from 'sequelize-typescript';
 import { AutoIncrement, Column, ForeignKey, PrimaryKey, Table } from "sequelize-typescript";
 import { Character } from "./character.model";
+import { on } from 'events';
 
 @Table
 export class Skill extends Model {
@@ -10,11 +11,19 @@ export class Skill extends Model {
     declare id: number;
 
     @Column({ unique : true })
-    name!: string;
+    declare name: string;
 
     @Column
-    description!: string;
+    declare description: string;
 
     @Column
-    effect!: string;
+    declare effect: string;
+
+    // Association with Character
+    @ForeignKey(() => Character)
+    @Column
+    declare characterId: number;
+
+    @BelongsTo(() => Character)
+    declare character: Character;
 }
