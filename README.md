@@ -45,6 +45,7 @@
 <ul>
   <li><strong>NestJS</strong> con Typescript</li>
   <li><strong>Sequelize</strong> + PostgreSQL</li>
+  <li><strong>Gemini AI API</strong></li>
 </ul>
 
 <h2>📁 Estructura del Proyecto</h2>
