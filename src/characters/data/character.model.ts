@@ -8,9 +8,8 @@ import {
   BelongsTo,
   HasOne,
 } from 'sequelize-typescript';
-import { Skill } from './skill.model';
+import { Skill } from '../../skills/skill.model';
 import { Location } from 'src/locations/data/location.model';
-import { forwardRef } from '@nestjs/common';
 
 @Table
 export class Character extends Model {

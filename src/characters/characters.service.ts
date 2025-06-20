@@ -6,9 +6,9 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Character } from './data/character.model';
 import { CharacterDto } from './dtos/CharacterDto';
 import { plainToInstance } from 'class-transformer';
-import { Skill } from './data/skill.model';
-import { Location } from 'src/locations/data/location.model';
-import { LocationsService } from 'src/locations/locations.service';
+import { Skill } from '../skills/skill.model';
+import { LocationsService } from '../locations/locations.service';
+import { SkillService } from '../skills/skill.service';
 
 @Injectable()
 export class CharactersService {
@@ -16,8 +16,7 @@ export class CharactersService {
     @InjectModel(Character)
     private characterModel: typeof Character,
 
-    @InjectModel(Skill)
-    private skillModel: typeof Skill,
+    private skillService: SkillService,
 
     private locationService: LocationsService,
   ) {}
@@ -40,7 +39,7 @@ async create(data: CharacterDto): Promise<CharacterDto> {
   }
 
   // Verify if passive skill and location exist
-  const skill = await this.skillModel.findByPk(data.passiveSkill);
+  const skill = await this.skillService.findByPk(data.passiveSkill);
   if (!skill) {
     throw new NotFoundException(`Skill with id ${data.passiveSkill} not found`);
   }
