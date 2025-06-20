@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
 import { GoogleGenAI } from '@google/genai';
 /**
  * Service to interact with the Gemini AI API for generating character content.
@@ -20,6 +19,6 @@ export class AIService {
       model: 'gemini-2.0-flash',
       contents: prompt,
     });
-    return response.text ?? 'No response text available';
+    return response.text ?? 'No text response available';
   }
 }

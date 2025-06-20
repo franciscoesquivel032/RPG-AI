@@ -14,5 +14,6 @@ import { LocationsModule } from 'src/locations/locations.module';
   ],
   controllers: [CharactersController],
   providers: [CharactersService],
+  exports: [CharactersModule, CharactersService],
 })
 export class CharactersModule {}
