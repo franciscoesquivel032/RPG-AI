@@ -25,15 +25,10 @@ export class Character extends Model {
   declare lore: string;
   @Column
   declare skinDescription: string;
+  @Column
+  declare location: string;
 
   // Skill association
   @HasOne(() => Skill, { as: 'passiveSkill', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   declare passiveSkill: Skill;
-
-  // Location association 
-  @ForeignKey(() => Location)
-  @Column
-  declare locationId: number;
-  @BelongsTo(() => Location, { as: 'location', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
-  declare location: Location;
 }

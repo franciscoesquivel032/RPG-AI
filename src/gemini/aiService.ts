@@ -51,10 +51,11 @@ export class AIService {
                 "description": "Descripción de la habilidad pasiva"
                 "effect": "Efecto de la habilidad pasiva"
             }
-            "location": ${(dto.location ?? "").trim().length === 0 ? "Localización del personaje basada en los demás datos" : `"${dto.location}"`}  
+            "location": ${(dto.location ?? "").trim().length === 0 ? "Localización del personaje basada en los demás datos, genera simplemente el nombre de la localización, por ejemplo: 'Ciudad dorada de Luthria' o 'Bosques del este de Sirk" : `"${dto.location}"`}  
         }
-        No utilices nombres de personajes ya existentes, amolda el personaje a la descripción del mundo y a la descripción del personaje fielmente.
-        Responde únicamente el JSON, sin ningún texto adicional.`;
+        No utilices nombres de personajes o localizaciones ya existentes, amolda el personaje a la descripción del mundo y a la descripción del personaje fielmente.
+        Responde únicamente con el objeto JSON. 
+        ES CRUCIAL QUE RESPONDAS SIN USAR COMILLAS TRIPLES, SIN USAR ETIQUETAS ${'```json'} Y SIN NINGÚN TEXTO ADICIONAL FUERA DEL JSON.`;
 
         return PROMPT;
         

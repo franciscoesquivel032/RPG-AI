@@ -7,7 +7,6 @@ import { Character } from './data/character.model';
 import { CharacterDto } from './dtos/CharacterDto';
 import { plainToInstance } from 'class-transformer';
 import { Skill } from '../skills/skill.model';
-import { LocationsService } from '../locations/locations.service';
 import { SkillService } from '../skills/skill.service';
 
 @Injectable()
@@ -17,8 +16,6 @@ export class CharactersService {
     private characterModel: typeof Character,
 
     private skillService: SkillService,
-
-    private locationService: LocationsService,
   ) {}
 
   /**
@@ -44,13 +41,6 @@ async create(data: CharacterDto): Promise<CharacterDto> {
     throw new NotFoundException(`Skill with id ${data.passiveSkill} not found`);
   }
 
-  const location = await this.locationService.findByPk(data.location);
-  if (!location) {
-    throw new NotFoundException(
-      `Location with id ${data.location} not found`,
-    );
-  }
-
   // Create character
   const character = await this.characterModel.create({
     name: data.name,
@@ -58,7 +48,7 @@ async create(data: CharacterDto): Promise<CharacterDto> {
     lore: data.lore,
     skinDescription: data.skinDescription,
     passiveSkillId: data.passiveSkill,
-    locationId: data.location,
+    location: data.location,
   });
 
   return plainToInstance(CharacterDto, character);
