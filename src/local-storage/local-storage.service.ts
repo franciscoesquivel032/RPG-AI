@@ -5,7 +5,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class LocalStorageService {
-  private uploadDir = join(process.cwd(), 'uploads');
+  private uploadDir = join(
+    process.cwd(),
+    process.env.LOCAL_STORAGE_DIR ?? (() => { throw new Error('LOCAL_STORAGE_DIR environment variable is not set'); })()
+  );
 
   private async ensureUploadDir() {
     try {

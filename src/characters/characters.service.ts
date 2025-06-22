@@ -5,7 +5,7 @@ import { CharacterDto } from './dtos/CharacterDto';
 import { plainToInstance } from 'class-transformer';
 import { Skill } from '../skills/skill.model';
 import { SkillService } from '../skills/skill.service';
-import { LocalStorageService } from 'src/localStorage/local-storage/local-storage.service';
+import { LocalStorageService } from 'src/local-storage/local-storage.service';
 import { CharacterWithImageDto } from './dtos/CharacterWithImageDto';
 
 @Injectable()

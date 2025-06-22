@@ -9,7 +9,7 @@ import { LocationsModule } from './locations/locations.module';
 import { Location } from './locations/data/location.model';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { LocalStorageModule } from './localStorage/local-storage/local-storage.module';
+import { LocalStorageModule } from './local-storage/local-storage.module';
 
 @Module({
   imports: [
