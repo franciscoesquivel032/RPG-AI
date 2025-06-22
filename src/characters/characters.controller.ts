@@ -16,6 +16,7 @@ import { CharacterDto } from './dtos/CharacterDto';
 import { CharactersService } from './characters.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage, diskStorage } from 'multer';
+import { CharacterWithImageDto } from './dtos/CharacterWithImageDto';
 
 @Controller('characters')
 export class CharactersController {
@@ -38,7 +39,7 @@ export class CharactersController {
     }),
   )
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() characterDto: CharacterDto, @UploadedFile() imageFile?: Express.Multer.File): Promise<CharacterDto> {
+  async create(@Body() characterDto: CharacterDto, @UploadedFile() imageFile?: Express.Multer.File): Promise<CharacterWithImageDto> {
     const response = await this.charactersService.create(characterDto, imageFile);
     return response;
   }

@@ -6,6 +6,7 @@ import { plainToInstance } from 'class-transformer';
 import { Skill } from '../skills/skill.model';
 import { SkillService } from '../skills/skill.service';
 import { LocalStorageService } from 'src/localStorage/local-storage/local-storage.service';
+import { CharacterWithImageDto } from './dtos/CharacterWithImageDto';
 
 @Injectable()
 export class CharactersService {
@@ -22,7 +23,7 @@ export class CharactersService {
    * @returns {Promise<CharacterDto>} A promise that resolves to the created CharacterDto.
    * @throws NotFoundException if a character with the same name and lore already exists.
    */
-  async create(data: CharacterDto, imageFile?: Express.Multer.File): Promise<CharacterDto> {
+  async create(data: CharacterDto, imageFile?: Express.Multer.File): Promise<CharacterWithImageDto> {
     // Verify if character already exits
     const charExists = await this.characterModel.findOne({
       where: { name: data.name, lore: data.lore },
@@ -60,7 +61,7 @@ export class CharactersService {
       imagePath: imagePath,
     });
 
-    return plainToInstance(CharacterDto, character);
+    return plainToInstance(CharacterWithImageDto, character);
   }
 
   /**
