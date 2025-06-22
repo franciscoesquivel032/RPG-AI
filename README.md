@@ -11,9 +11,8 @@
 <ul>
   <li>Generación automática de personajes con nombre, clase, historia, apariencia y habilidad pasiva.</li>
   <li>Soporte para ubicación opcional del personaje.</li>
-  <li>Validación robusta con DTOs y <code>class-validator</code>.</li>
-  <li>Diseño limpio basado en módulos: <code>Characters</code>, <code>Skills</code>, <code>Locations</code>, <code>Factions</code>.</li>
   <li>Integración con servicios de IA para generar contenido narrativo dinámico.</li>
+  <li>IA generativa para crear imágenes a partir de un personaje</li>
 </ul>
 
 <h2>¿Cómo funciona?</h2>
@@ -43,27 +42,11 @@
         Responde únicamente el JSON, sin ningún texto adicional.`;
 </code></pre>
 
-<h2>🔧 Stack Tecnológico</h2>
+<h2>Stack Tecnológico</h2>
 <ul>
   <li><strong>NestJS</strong> con Typescript</li>
   <li><strong>Sequelize</strong> + PostgreSQL</li>
-  <li><strong>Gemini AI API</strong></li>
+  <li><strong>Gemini AI API + OpenAI API (DALL-E)</strong></li>
 </ul>
-
-<h2>📁 Estructura del Proyecto</h2>
-
-<pre><code>
-src/
-├── characters/
-│   ├── character.entity.ts
-│   ├── characters.service.ts
-│   ├── characters.controller.ts
-├── skills/
-├── factions/
-├── locations/
-├── dto/
-│   ├── generate-character.dto.ts
-│   ├── character-response.dto.ts
-</code></pre>
 
 <h2> Actualmente trabajando en almacenamiento local para las imágenes de los personajes !!!! </h2>
