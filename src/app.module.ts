@@ -7,6 +7,9 @@ import { Character } from './characters/data/character.model';
 import { GenerateCharacterModule } from './ai/generateCharacter.module';
 import { LocationsModule } from './locations/locations.module';
 import { Location } from './locations/data/location.model';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { LocalStorageModule } from './localStorage/local-storage/local-storage.module';
 
 @Module({
   imports: [
@@ -18,8 +21,14 @@ import { Location } from './locations/data/location.model';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       synchronize: true,
-      models: [Character, Skill, Location]
+      models: [Character, Skill, Location],
     }),
+    
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads', 
+    }),
+    LocalStorageModule,            
     CharactersModule,
     GenerateCharacterModule,
     LocationsModule,

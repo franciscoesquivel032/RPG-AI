@@ -32,8 +32,8 @@ export class LocalStorageService {
       await fs.writeFile(filePath, buffer);
       return filename;
     } catch (err) {
-      console.error('Error al guardar imagen localmente:', err);
-      throw new InternalServerErrorException('No se pudo guardar la imagen en el servidor');
+      console.error('Error saving image locally', err);
+      throw new InternalServerErrorException('Failed to save image locally');
     }
   }
 }

@@ -6,4 +6,4 @@ import { LocalStorageService } from './local-storage.service';
   providers: [LocalStorageService],
   exports: [LocalStorageService],
 })
-export class FilesModule {}
+export class LocalStorageModule {}

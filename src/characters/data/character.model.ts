@@ -27,7 +27,8 @@ export class Character extends Model {
   declare skinDescription: string;
   @Column
   declare location: string;
-
+  @Column
+  declare imagePath: string;
 
   // Skill association
   @HasOne(() => Skill, { as: 'passiveSkill', onDelete: 'CASCADE', onUpdate: 'CASCADE' })

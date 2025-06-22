@@ -1,20 +1,18 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Character } from './data/character.model';
 import { CharacterDto } from './dtos/CharacterDto';
 import { plainToInstance } from 'class-transformer';
 import { Skill } from '../skills/skill.model';
 import { SkillService } from '../skills/skill.service';
+import { LocalStorageService } from 'src/localStorage/local-storage/local-storage.service';
 
 @Injectable()
 export class CharactersService {
   constructor(
     @InjectModel(Character)
     private characterModel: typeof Character,
-
+    private readonly localStorageService: LocalStorageService,
     private skillService: SkillService,
   ) {}
 
@@ -24,36 +22,46 @@ export class CharactersService {
    * @returns {Promise<CharacterDto>} A promise that resolves to the created CharacterDto.
    * @throws NotFoundException if a character with the same name and lore already exists.
    */
-async create(data: CharacterDto): Promise<CharacterDto> {
-  // Verify if character already exits
-  const charExists = await this.characterModel.findOne({
-    where: { name: data.name, lore: data.lore },
-  });
-  if (charExists) {
-    throw new NotFoundException(
-      `Character with name "${data.name}" already exists`,
-    );
+  async create(data: CharacterDto, imageFile?: Express.Multer.File): Promise<CharacterDto> {
+    // Verify if character already exits
+    const charExists = await this.characterModel.findOne({
+      where: { name: data.name, lore: data.lore },
+    });
+    if (charExists) {
+      throw new NotFoundException(
+        `Character with name "${data.name}" already exists`,
+      );
+    }
+
+    // If an image file is provided, save it to local storage
+    let imagePath: string | null = null;
+    if (imageFile) {
+      const buffer = imageFile.buffer;
+      const filename = await this.localStorageService.saveImageBuffer(buffer, 'png');
+      imagePath = `/uploads/${filename}`;
+    }
+
+    // Verify if passive skill and location exist
+    const skill = await this.skillService.findByPk(data.passiveSkill);
+    if (!skill) {
+      throw new NotFoundException(
+        `Skill with id ${data.passiveSkill} not found`,
+      );
+    }
+
+    // Create character
+    const character = await this.characterModel.create({
+      name: data.name,
+      class: data.class,
+      lore: data.lore,
+      skinDescription: data.skinDescription,
+      passiveSkillId: data.passiveSkill,
+      location: data.location,
+      imagePath: imagePath,
+    });
+
+    return plainToInstance(CharacterDto, character);
   }
-
-  // Verify if passive skill and location exist
-  const skill = await this.skillService.findByPk(data.passiveSkill);
-  if (!skill) {
-    throw new NotFoundException(`Skill with id ${data.passiveSkill} not found`);
-  }
-
-  // Create character
-  const character = await this.characterModel.create({
-    name: data.name,
-    class: data.class,
-    lore: data.lore,
-    skinDescription: data.skinDescription,
-    passiveSkillId: data.passiveSkill,
-    location: data.location,
-  });
-
-  return plainToInstance(CharacterDto, character);
-}
-
 
   /**
    * Retrieves all characters from the database.
@@ -61,15 +69,11 @@ async create(data: CharacterDto): Promise<CharacterDto> {
    */
   async findAll(): Promise<CharacterDto[]> {
     const characters = await this.characterModel.findAll({
-      include: [ 
-        { model: Skill, as: 'passiveSkill' },
-      ],
+      include: [{ model: Skill, as: 'passiveSkill' }],
     });
     return plainToInstance(CharacterDto, characters);
   }
 
-  
- 
   /**
    * Retrieves a character by its ID.
    * @param id - The ID of the character to retrieve.
@@ -79,9 +83,7 @@ async create(data: CharacterDto): Promise<CharacterDto> {
   async findById(id: number): Promise<CharacterDto> {
     const char = await this.characterModel.findOne({
       where: { id },
-      include: [
-        { model: Skill, as: 'passiveSkill' },
-      ],
+      include: [{ model: Skill, as: 'passiveSkill' }],
     });
 
     if (!char) {
