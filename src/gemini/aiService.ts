@@ -55,6 +55,8 @@ export class AIService {
             }
             "location": ${(dto.location ?? '').trim().length === 0 ? "Localización del personaje basada en los demás datos, genera simplemente el nombre de la localización, por ejemplo: 'Ciudad dorada de Luthria' o 'Bosques del este de Sirk" : `"${dto.location}"`}  
         }
+        Ten en cuenta que se generará una imagen a partir del personaje, por lo tanto debe ser lo más detallado posible pero breve.
+        Evita palabras o frases que puedan herir la sensibilidad de las personas, como violencia, sangre, muerte, etc. Puedes hacer alusión a estos conceptos de forma sutil, pero no debes describirlos de forma explícita.
         No utilices nombres de personajes o localizaciones ya existentes, amolda el personaje a la descripción del mundo y a la descripción del personaje fielmente.
         Responde únicamente con el objeto JSON. 
         ES CRUCIAL QUE RESPONDAS SIN USAR COMILLAS TRIPLES, SIN USAR ETIQUETAS ${'```json'} Y SIN NINGÚN TEXTO ADICIONAL FUERA DEL JSON.`;
@@ -70,6 +72,7 @@ export class AIService {
   async imageFromCharacter(prompt: string): Promise<Buffer> {
     let buffer: Buffer;
 
+    console.log('Generating image with prompt:', prompt);
     try {
       const response = await this.OPENAI_AI.images.generate({
         model: 'dall-e-3',
@@ -175,7 +178,8 @@ export class AIService {
    * @returns A string prompt for the AI to generate an image.
    */
   getImageFromCharacterPrompt(character: GenerateCharacterResponseDto): string {
-    const prompt: string = `Crea una imagen de un personaje de RPG basándote fielmente en la siguiente descripción:
+    const prompt: string = `No incluyas texto de ningún tipo en la imagen.
+    Crea una imagen de un personaje de RPG basándote fielmente en la siguiente descripción:
     Nombre: ${character.name}
     Clase: ${character.class}
     Historia: ${character.lore}
@@ -185,7 +189,8 @@ export class AIService {
     La imagen debe reflejar la esencia del personaje, incluyendo su vestimenta, armas, y cualquier otro detalle relevante que se derive de la descripción proporcionada.
     Asegúrate de que la imagen sea detallada y fiel a la descripción del personaje, capturando su personalidad y el entorno en el que se encuentra.
     Responde únicamente con la imagen generada, sin ningún texto adicional.
-    La imagen del personaje debe ser de alta calidad y adecuada para un juego de rol, mostrando al personaje en una pose dinámica o representativa de su clase y habilidades.
+    No incluyas texto en la imagen, ni marcas de agua, ni logotipos. La imagen debe ser adecuada para un juego de rol y debe poder ser utilizada como avatar o ilustración del personaje.
+    La imagen deberá mostrar al personaje en una pose dinámica o representativa de su clase y habilidades y manteniendo un estilo similar al de un videojuego.
     `;
 
     return prompt;

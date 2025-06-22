@@ -43,7 +43,7 @@ export class GenerateCharacterService {
 
     let buffer: Buffer | null = null;
     try {
-        buffer = await this.aiService.imageFromCharacterGemini(prompt);
+        buffer = await this.aiService.imageFromCharacter(prompt);
     } catch (error) {
         console.error('Error generating image:', error);
         throw new Error(
