@@ -1,11 +1,13 @@
 <h1>🛡️ RPG Character Generator API</h1>
 
+<p>Ya se puede generar imágenes a partir de un personaje!! ^_^</p>
+
 <p>
   Esta API, construida con <strong>NestJS</strong>, permite generar personajes personalizados para videojuegos de rol (RPG) a partir de descripciones textuales de mundos ficticios y perfiles de personajes.
   Se pretende en un futuro generar el mundo entero como generador de universos para videojuegos RPG.
 </p>
 
-<h2>📦 Características</h2>
+<h2> Características</h2>
 <ul>
   <li>Generación automática de personajes con nombre, clase, historia, apariencia y habilidad pasiva.</li>
   <li>Soporte para ubicación opcional del personaje.</li>
@@ -14,7 +16,7 @@
   <li>Integración con servicios de IA para generar contenido narrativo dinámico.</li>
 </ul>
 
-<h2>🧠 ¿Cómo funciona?</h2>
+<h2>¿Cómo funciona?</h2>
 
 <p>Cuando haces una petición para generar un personaje, la API utiliza el siguiente <strong>prompt</strong> para construir una solicitud textual que es enviada a un modelo de IA:</p>
 
@@ -64,4 +66,4 @@ src/
 │   ├── character-response.dto.ts
 </code></pre>
 
-<h2> Actualmente trabajando en generación de imagen para el personaje !!!! </h2>
+<h2> Actualmente trabajando en almacenamiento local para las imágenes de los personajes !!!! </h2>
