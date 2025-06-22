@@ -2,14 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { GenerateCharacterResponseDto } from './dtos/generateCharacterResponseDto';
 import { GenerateCharacterDto } from './dtos/generateCharacterDto';
+import OpenAI from 'openai';
 
 /**
  * Service to interact with the Gemini AI API for generating character content.
  */
 @Injectable()
 export class AIService {
-  private readonly API_KEY: string = process.env.GEMINI_API_KEY || 'NO API KEY';
-  private readonly AI = new GoogleGenAI({ apiKey: this.API_KEY });
+  private readonly GEMINI_API_KEY: string = process.env.GEMINI_API_KEY || 'NO API KEY';
+  private readonly GEMINI_AI = new GoogleGenAI({ apiKey: this.GEMINI_API_KEY });
+
+  private readonly OPENAI_API_KEY: string = process.env.OPENAI_API_KEY || 'NO API KEY';
+  private readonly OPENAI_AI = new OpenAI({ apiKey: this.OPENAI_API_KEY });
 
   /**
    * Generates text content based on the provided prompt using the Gemini AI API.
@@ -19,7 +23,7 @@ export class AIService {
   async textToText(prompt: string): Promise<string> {
     let response;
     try {
-      response = await this.AI.models.generateContent({
+      response = await this.GEMINI_AI.models.generateContent({
         model: 'gemini-2.0-flash',
         contents: prompt,
       });
@@ -59,16 +63,54 @@ export class AIService {
   }
 
   /**
-   * Generates an image based on the provided character data using the Gemini AI API.
-   * @param character - The character data to generate an image from.
+   * Generates an image based on the provided character data using the OpenAI API.
+   * @param prompt - The prompt to generate an image from.
    * @returns A promise that resolves to a Buffer containing the generated image.
    */
   async imageFromCharacter(prompt: string): Promise<Buffer> {
     let buffer: Buffer;
 
     try {
-      const response = await this.AI.models.generateContent({
-        model: 'models/gemini-2.5-flash',
+      const response = await this.OPENAI_AI.images.generate({
+        model: 'dall-e-3',
+        prompt: prompt,
+        n: 1,
+        size: '1024x1024',
+        quality: 'standard',
+        response_format: 'b64_json',
+      });
+
+      const imageData = response?.data?.[0]?.b64_json;
+
+      if (!imageData) {
+        throw new Error('No image data found in the AI response.');
+      }
+
+      buffer = Buffer.from(imageData, 'base64');
+    } catch (error) {
+      console.error('Error generating image:', error);
+      throw new Error('Failed to generate image from AI.');
+    }
+
+    return buffer;
+  }
+
+  /**
+   * @deprecated
+   * NOT WORKING, GEMINI AI API DOES NOT SUPPORT SPANISH DEVELOPERS.
+   * AI image generation with gemini-2.0-flash-preview is not avalable in certain regions, including Spain.
+   * I'm leaving this method here for reference. <3 !!
+   * 
+   * Generates an image based on the provided character data using the Gemini AI API.
+   * @param character - The character data to generate an image from.
+   * @returns A promise that resolves to a Buffer containing the generated image.
+   */
+  async imageFromCharacterGemini(prompt: string): Promise<Buffer> {
+    let buffer: Buffer;
+
+    try {
+      const response = await this.GEMINI_AI.models.generateContent({
+        model: 'gemini-2.0-flash-preview',
         contents: prompt,
         config: {
           responseModalities: [Modality.IMAGE],
@@ -101,6 +143,7 @@ export class AIService {
   }
 
   /**
+   * @deprecated
    * Extracts the image buffer from the AI response.
    * @param response - The response object from the AI API.
    * @returns A Buffer containing the image data, or null if no image data is found.
@@ -144,7 +187,7 @@ export class AIService {
     Responde únicamente con la imagen generada, sin ningún texto adicional.
     La imagen del personaje debe ser de alta calidad y adecuada para un juego de rol, mostrando al personaje en una pose dinámica o representativa de su clase y habilidades.
     `;
-    
+
     return prompt;
   }
 }
