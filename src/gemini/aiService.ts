@@ -182,9 +182,7 @@ export class AIService {
     Crea una imagen de un personaje de RPG basándote fielmente en la siguiente descripción:
     Nombre: ${character.name}
     Clase: ${character.class}
-    Historia: ${character.lore}
     Descripción de la apariencia: ${character.skinDescription}
-    Habilidad pasiva: ${character.passiveSkill.name} - ${character.passiveSkill.description}
     Localización: ${character.location}
     La imagen debe reflejar la esencia del personaje, incluyendo su vestimenta, armas, y cualquier otro detalle relevante que se derive de la descripción proporcionada.
     Asegúrate de que la imagen sea detallada y fiel a la descripción del personaje, capturando su personalidad y el entorno en el que se encuentra.
