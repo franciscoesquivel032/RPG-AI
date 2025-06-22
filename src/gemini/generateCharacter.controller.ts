@@ -11,6 +11,11 @@ export class GenerateCharacterController {
 
     @Post('generate-text')
     async generateCharacterFromText(@Body() dto: GenerateCharacterDto): Promise<string> {
-        return this.generateCharacterService.generateCharacter(dto);
+        return this.generateCharacterService.generateCharacterFromText(dto);
+    }
+
+    @Post('generate-image')
+    async generateImageFromCharacter(@Body() character: GenerateCharacterResponseDto): Promise<Buffer | null> {
+        return this.generateCharacterService.generateImageFromCharacter(character);
     }
 }

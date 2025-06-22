@@ -26,7 +26,7 @@ export class GenerateCharacterResponseDto{
     skinDescription: string;
     @ValidateNested()
     @Type(() => SkillDto)
-    skillDto: SkillDto;
+    passiveSkill: SkillDto;
     @IsString()
     location: string;
 }

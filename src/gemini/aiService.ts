@@ -3,7 +3,6 @@ import { GoogleGenAI, Modality } from '@google/genai';
 import { GenerateCharacterResponseDto } from './dtos/generateCharacterResponseDto';
 import { GenerateCharacterDto } from './dtos/generateCharacterDto';
 
-
 /**
  * Service to interact with the Gemini AI API for generating character content.
  */
@@ -33,9 +32,8 @@ export class AIService {
     return response.text ?? 'No text response available';
   }
 
-  getTextToCharacterPrompt(dto: GenerateCharacterDto) : string {
-        const PROMPT = 
-        `Genera un personaje de rpg basado en la siguiente descripción del mundo:
+  getTextToCharacterPrompt(dto: GenerateCharacterDto): string {
+    const PROMPT = `Genera un personaje de rpg basado en la siguiente descripción del mundo:
         ${dto.worldDescription} 
         si la descripción del mundo es una descripción de un videojuego, una serie o una película, utiliza la descripción del mundo como base para crear un personaje que encaje en ese universo.
         Utiliza la siguiente descripción del personaje:
@@ -51,39 +49,37 @@ export class AIService {
                 "description": "Descripción de la habilidad pasiva"
                 "effect": "Efecto de la habilidad pasiva"
             }
-            "location": ${(dto.location ?? "").trim().length === 0 ? "Localización del personaje basada en los demás datos, genera simplemente el nombre de la localización, por ejemplo: 'Ciudad dorada de Luthria' o 'Bosques del este de Sirk" : `"${dto.location}"`}  
+            "location": ${(dto.location ?? '').trim().length === 0 ? "Localización del personaje basada en los demás datos, genera simplemente el nombre de la localización, por ejemplo: 'Ciudad dorada de Luthria' o 'Bosques del este de Sirk" : `"${dto.location}"`}  
         }
         No utilices nombres de personajes o localizaciones ya existentes, amolda el personaje a la descripción del mundo y a la descripción del personaje fielmente.
         Responde únicamente con el objeto JSON. 
         ES CRUCIAL QUE RESPONDAS SIN USAR COMILLAS TRIPLES, SIN USAR ETIQUETAS ${'```json'} Y SIN NINGÚN TEXTO ADICIONAL FUERA DEL JSON.`;
 
-        return PROMPT;
-        
-    }
+    return PROMPT;
+  }
 
   /**
    * Generates an image based on the provided character data using the Gemini AI API.
    * @param character - The character data to generate an image from.
    * @returns A promise that resolves to a Buffer containing the generated image.
    */
-  async imageFromCharacter(character: GenerateCharacterResponseDto,): Promise<Buffer | null> {
-    let buffer: Buffer | null = null;
-
-    if (!character)
-      throw new Error('Character data is required to generate an iamge.');
-
-    const prompt = getImageFromCharacterPrompt(character);
+  async imageFromCharacter(prompt: string): Promise<Buffer> {
+    let buffer: Buffer;
 
     try {
       const response = await this.AI.models.generateContent({
-        model: 'gemini-2.0-flash-preview-image-generation',
+        model: 'models/gemini-2.5-flash',
         contents: prompt,
         config: {
-          responseModalities: [Modality.TEXT, Modality.IMAGE],
+          responseModalities: [Modality.IMAGE],
         },
       });
-
-      if (!response || !response.candidates || response.candidates.length === 0) {
+      console.log('AI response received:', response);
+      if (
+        !response ||
+        !response.candidates ||
+        response.candidates.length === 0
+      ) {
         throw new Error('No candidates found in the AI response.');
       }
 
@@ -96,7 +92,9 @@ export class AIService {
       buffer = imageBuffer;
     } catch (error) {
       console.error('Error generating image:', error);
-      throw new Error('Failed to generate image from AI. Please check the prompt and try again.');
+      throw new Error(
+        'Failed to generate image from AI. Please check the prompt and try again.',
+      );
     }
 
     return buffer;
@@ -127,21 +125,27 @@ export class AIService {
 
     return result;
   }
-}
 
-/**
- * Constructs a prompt for generating an image of a character based on the provided character data.
- * @param character - The character data to base the image on.
- * @returns A string prompt for the AI to generate an image.
- */
-function getImageFromCharacterPrompt(character: GenerateCharacterResponseDto) {
-  const prompt: string = `Crea una imagen de un personaje de RPG basándote fielmente en la siguiente descripción:
+  /**
+   * Constructs a prompt for generating an image of a character based on the provided character data.
+   * @param character - The character data to base the image on.
+   * @returns A string prompt for the AI to generate an image.
+   */
+  getImageFromCharacterPrompt(character: GenerateCharacterResponseDto): string {
+    const prompt: string = `Crea una imagen de un personaje de RPG basándote fielmente en la siguiente descripción:
     Nombre: ${character.name}
     Clase: ${character.class}
     Historia: ${character.lore}
     Descripción de la apariencia: ${character.skinDescription}
-    Habilidad pasiva: ${character.skillDto.name} - ${character.skillDto.description}
-    Localización: ${character.location}`;
+    Habilidad pasiva: ${character.passiveSkill.name} - ${character.passiveSkill.description}
+    Localización: ${character.location}
+    La imagen debe reflejar la esencia del personaje, incluyendo su vestimenta, armas, y cualquier otro detalle relevante que se derive de la descripción proporcionada.
+    Asegúrate de que la imagen sea detallada y fiel a la descripción del personaje, capturando su personalidad y el entorno en el que se encuentra.
+    Responde únicamente con la imagen generada, sin ningún texto adicional.
+    La imagen del personaje debe ser de alta calidad y adecuada para un juego de rol, mostrando al personaje en una pose dinámica o representativa de su clase y habilidades.
+    Asegurate de que la imagen sea visualmente atractiva y coherente con el estilo de un RPG.
+    `;
 
-  return prompt;
+    return prompt;
+  }
 }
