@@ -28,6 +28,7 @@ export class Character extends Model {
   @Column
   declare location: string;
 
+
   // Skill association
   @HasOne(() => Skill, { as: 'passiveSkill', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   declare passiveSkill: Skill;

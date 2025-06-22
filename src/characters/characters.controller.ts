@@ -8,7 +8,7 @@ export class CharactersController {
 
     constructor(private readonly charactersService : CharactersService) {}
 
-    @Post('create')
+    @Post('create-no-image')
     @HttpCode(HttpStatus.CREATED)
     async create(@Body() characterDto : CharacterDto){
         const response = await this.charactersService.create(characterDto);
