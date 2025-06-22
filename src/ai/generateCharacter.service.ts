@@ -3,12 +3,13 @@ import { AIService } from './aiService';
 import { GenerateCharacterDto } from './dtos/generateCharacterDto';
 import { plainToInstance } from 'class-transformer';
 import { GenerateCharacterResponseDto } from './dtos/generateCharacterResponseDto';
+import { buffer } from 'stream/consumers';
 
 @Injectable()
 export class GenerateCharacterService {
   constructor(private readonly aiService: AIService) {}
 
-  async generateCharacter(dto: GenerateCharacterDto): Promise<string> {
+  async generateCharacterFromText(dto: GenerateCharacterDto): Promise<string> {
     const prompt = this.aiService.getTextToCharacterPrompt(dto);
 
     let character: GenerateCharacterResponseDto;
@@ -31,5 +32,26 @@ export class GenerateCharacterService {
     }
     const response = JSON.stringify(character, null, 2); // Convert the character object to a formatted JSON string
     return response;
+  }
+
+  async generateImageFromCharacter(character: GenerateCharacterResponseDto): Promise<Buffer>{
+
+    if(!character) 
+        throw new Error('Character data is required to generate an image.'); 
+
+    const prompt = this.aiService.getImageFromCharacterPrompt(character);
+
+    let buffer: Buffer | null = null;
+    try {
+        buffer = await this.aiService.imageFromCharacter(prompt);
+    } catch (error) {
+        console.error('Error generating image:', error);
+        throw new Error(
+            'Failed to generate image from AI. Please check the character data and try again.',
+        );
+    }
+
+    return buffer;
+
   }
 }

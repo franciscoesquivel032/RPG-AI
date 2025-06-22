@@ -4,7 +4,7 @@ import { CharactersModule } from './characters/characters.module';
 import 'dotenv/config';
 import { Skill } from './skills/skill.model';
 import { Character } from './characters/data/character.model';
-import { GenerateCharacterModule } from './gemini/generateCharacter.module';
+import { GenerateCharacterModule } from './ai/generateCharacter.module';
 import { LocationsModule } from './locations/locations.module';
 import { Location } from './locations/data/location.model';
 
