@@ -143,9 +143,8 @@ export class AIService {
     Asegúrate de que la imagen sea detallada y fiel a la descripción del personaje, capturando su personalidad y el entorno en el que se encuentra.
     Responde únicamente con la imagen generada, sin ningún texto adicional.
     La imagen del personaje debe ser de alta calidad y adecuada para un juego de rol, mostrando al personaje en una pose dinámica o representativa de su clase y habilidades.
-    Asegurate de que la imagen sea visualmente atractiva y coherente con el estilo de un RPG.
     `;
-
+    
     return prompt;
   }
 }
