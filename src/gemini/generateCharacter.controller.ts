@@ -9,8 +9,8 @@ export class GenerateCharacterController {
         private readonly generateCharacterService: GenerateCharacterService
     ){}
 
-    @Post('generate')
-    async generateCharacter(@Body() dto: GenerateCharacterDto): Promise<string> {
+    @Post('generate-text')
+    async generateCharacterFromText(@Body() dto: GenerateCharacterDto): Promise<string> {
         return this.generateCharacterService.generateCharacter(dto);
     }
 }

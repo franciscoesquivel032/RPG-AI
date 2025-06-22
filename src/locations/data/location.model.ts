@@ -13,12 +13,4 @@ export class Location extends Model<Location> {
     declare description: string;
     @Column
     declare lore: string;
-
-    // Association with Character
-    @HasMany(() => Character, { 
-        as: 'characters',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-     })
-    declare characters: Character[];
 }

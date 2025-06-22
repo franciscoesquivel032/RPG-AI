@@ -19,10 +19,10 @@ export class CharacterDto {
     @IsInt()
     passiveSkill: number;
     @Expose()
-    @IsInt()
-    location: number;
+    @IsString()
+    location: string;
 
-    constructor(name: string, className: string, lore: string, skinDescription: string, passiveSkill: number, location: number) {
+    constructor(name: string, className: string, lore: string, skinDescription: string, passiveSkill: number, location: string) {
         this.name = name;
         this.class = className;
         this.lore = lore;
