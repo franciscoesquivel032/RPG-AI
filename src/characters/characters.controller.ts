@@ -22,7 +22,7 @@ import { CharacterWithImageDto } from './dtos/CharacterWithImageDto';
 export class CharactersController {
   constructor(private readonly charactersService: CharactersService) {}
 
-  @Post('create-no-image')
+  @Post('create')
   @UseInterceptors(
     FileInterceptor('image', {
       storage: memoryStorage(),
