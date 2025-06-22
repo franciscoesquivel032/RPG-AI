@@ -6,8 +6,10 @@ import {
   AutoIncrement,
   ForeignKey,
   BelongsTo,
+  HasOne,
 } from 'sequelize-typescript';
-import { Skill } from './skill.model';
+import { Skill } from '../../skills/skill.model';
+import { Location } from 'src/locations/data/location.model';
 
 @Table
 export class Character extends Model {
@@ -23,9 +25,10 @@ export class Character extends Model {
   declare lore: string;
   @Column
   declare skinDescription: string;
-  @ForeignKey(() => Skill)
   @Column
-  declare passiveSkillId: number;
-  @BelongsTo(() => Skill, { as: 'passiveSkill' })
+  declare location: string;
+
+  // Skill association
+  @HasOne(() => Skill, { as: 'passiveSkill', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   declare passiveSkill: Skill;
 }

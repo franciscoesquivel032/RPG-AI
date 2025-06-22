@@ -1,5 +1,7 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { GenerateCharacterService } from "./generateCharacter.service";
+import { GenerateCharacterDto } from "./dtos/generateCharacterDto";
+import { GenerateCharacterResponseDto } from "./dtos/generateCharacterResponseDto";
 
 @Controller('ai')
 export class GenerateCharacterController {
@@ -7,11 +9,8 @@ export class GenerateCharacterController {
         private readonly generateCharacterService: GenerateCharacterService
     ){}
 
-    @Post('generateCharacter')
-    async generateCharacter(
-        @Body('worldDescription') worldDescription: string,
-        @Body('characterDescription') characterDescription: string
-    ): Promise<string> {
-        return this.generateCharacterService.generateCharacter(worldDescription, characterDescription);
+    @Post('generate-text')
+    async generateCharacterFromText(@Body() dto: GenerateCharacterDto): Promise<string> {
+        return this.generateCharacterService.generateCharacter(dto);
     }
 }

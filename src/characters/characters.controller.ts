@@ -22,16 +22,16 @@ export class CharactersController {
 
     @Get('find:id')
     async findById(@Param('id') id : number) : Promise<CharacterDto>{
-        return await this.charactersService.findById(+id);
+        return await this.charactersService.findById(id);
     }
 
     @Put('put:id')
     async update(@Param('id') id : number, @Body() data : CharacterDto) : Promise<CharacterDto>{
-        return this.charactersService.update(+id, data);
+        return this.charactersService.update(id, data);
     }
 
     @Delete('delete:id')
     async delete (@Param('id') id : number) : Promise<boolean>{
-        return await this.charactersService.delete(+id);
+        return await this.charactersService.delete(id);
     }
 }

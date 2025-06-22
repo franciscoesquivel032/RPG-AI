@@ -1,16 +1,33 @@
-import { Expose, Type } from "class-transformer";
-import { SkillDto } from "./SkillDto";
+import { Expose } from "class-transformer";
+import { IsInt, IsString } from "class-validator";
+import { IsIn } from "sequelize-typescript";
 
 export class CharacterDto {
     @Expose()
+    @IsString()
     name: string;
     @Expose()
+    @IsString()
     class: string;
     @Expose()
+    @IsString()
     lore: string;
     @Expose()
+    @IsString()
     skinDescription: string;
     @Expose()
-    @Type(() => SkillDto)
-    passiveSkill: SkillDto;
+    @IsInt()
+    passiveSkill: number;
+    @Expose()
+    @IsString()
+    location: string;
+
+    constructor(name: string, className: string, lore: string, skinDescription: string, passiveSkill: number, location: string) {
+        this.name = name;
+        this.class = className;
+        this.lore = lore;
+        this.skinDescription = skinDescription;
+        this.passiveSkill = passiveSkill;
+        this.location = location;
+    }
 }
